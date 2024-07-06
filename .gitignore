@@ -1,0 +1,7 @@
+venv
+db.sqlite3
+*.pyc
+*.swp
+*.swo
+golfbackend/golfbackend/local_settings.py
+.vscode
