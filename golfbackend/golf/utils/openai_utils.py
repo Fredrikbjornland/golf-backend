@@ -52,7 +52,7 @@ def parse_tee_time_query(query_text):
         If information is not provided, use null for that field.
         """
 
-        # Call the OpenAI API
+        print(settings.MOCK_OPENAI_CALL)
         if settings.MOCK_OPENAI_CALL:
             response = {
                 "choices": [
@@ -66,7 +66,6 @@ def parse_tee_time_query(query_text):
                     }
                 ]
             }
-            # Parse the mock response (dictionary access)
             response_content = response["choices"][0]["message"]["content"]
         else:
             response = client.chat.completions.create(

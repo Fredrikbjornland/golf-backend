@@ -1,4 +1,3 @@
-
 from django.core.management.base import (
     BaseCommand,
 )
@@ -31,7 +30,7 @@ def create_dates(days=7):
 
 def scrape_tee_times():
     relevant_dates = create_dates(4)
-    clubs = GolfClub.objects.filter(id=3, disabled=False).prefetch_related('golf_courses')
+    clubs = GolfClub.objects.filter(id=18, disabled=False).prefetch_related("golf_courses")
     for club in clubs:
         for course in club.golf_courses.all():
             timeslots = get_timeslots_of_course(course.course_id, club.club_id, course.name, relevant_dates)
@@ -42,5 +41,5 @@ def scrape_tee_times():
                     availability=timeslot.get("availability"),
                     available_spots=timeslot.get("available_spots"),
                     expired=timeslot.get("expired"),
-                    price_in_ore=timeslot.get("price_in_ore")
+                    price_in_ore=timeslot.get("price_in_ore"),
                 )
