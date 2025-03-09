@@ -1,6 +1,12 @@
+from typing import Any
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Q
+from datetime import datetime, timedelta
+import logging
+
+logger = logging.getLogger("default")
 
 
 class GolfClub(models.Model):
@@ -32,10 +38,65 @@ class TeeTime(models.Model):
     available_spots = models.IntegerField()
     expired = models.BooleanField()
     last_updated = models.DateTimeField(auto_now=True)
-    price_in_ore = models.IntegerField(null=True, blank=True, validators=[
-        MinValueValidator(0),
-        MaxValueValidator(10000)
-    ])
+    price_in_ore = models.IntegerField(
+        null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(1000000)]
+    )
+
+    @classmethod
+    def apply_filters(self, filter_data: dict[str, Any]) -> Q:
+        filters = Q()
+
+        if filter_data.get("date"):
+            # Handles both dates and date ranges on the format 'YYYY-MM-DD to YYYY-MM-DD'
+            try:
+                if "to" in filter_data["date"]:
+                    start_date, end_date = filter_data["date"].split("to")
+                    start_date = start_date.strip()
+                    end_date = end_date.strip()
+                    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+                    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+                    date_range = []
+                    current_date = start_date_obj
+                    while current_date <= end_date_obj:
+                        date_range.append(current_date)
+                        current_date += timedelta(days=1)
+                    filters &= Q(time__date__in=date_range)
+                else:
+                    date_obj = datetime.strptime(filter_data["date"], "%Y-%m-%d").date()
+                    filters &= Q(time__date=date_obj)
+            except ValueError:
+                logger.warning(f"Invalid date format: {filter_data['date']}")
+
+        if filter_data.get("time_range"):
+            time_range = filter_data["time_range"].lower()
+            if "morning" in time_range:
+                filters &= Q(time__hour__gte=6, time__hour__lt=12)
+            elif "afternoon" in time_range:
+                filters &= Q(time__hour__gte=12, time__hour__lt=17)
+            elif "evening" in time_range:
+                filters &= Q(time__hour__gte=17, time__hour__lt=21)
+
+        if filter_data.get("players_count"):
+            try:
+                players_count = int(filter_data["players_count"])
+                filters &= Q(available_spots__gte=players_count)
+            except (ValueError, TypeError):
+                logger.warning(f"Invalid players count: {filter_data['players_count']}")
+
+        if filter_data.get("location"):
+            location = filter_data["location"].lower()
+            location_filters = Q(golf_course__golf_club__name__icontains=location)
+            filters &= location_filters
+
+        if filter_data.get("max_price") and filter_data["max_price"] is not None:
+            try:
+                max_price_ore = int(float(filter_data["max_price"]) * 100)
+                filters &= Q(price_in_ore__lte=max_price_ore) | Q(price_in_ore__isnull=True)
+            except (ValueError, TypeError):
+                logger.warning(f"Invalid max price: {filter_data['max_price']}")
+
+        filters &= Q(expired=False)
+        return filters
 
     def __str__(self) -> str:
         return f"{self.time.strftime('%Y-%m-%d %H:%M')} - {self.golf_course.name} - {self.availability}"

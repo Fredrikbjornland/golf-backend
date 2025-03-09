@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -112,6 +112,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Add these settings to enforce 24-hour time format
+USE_L10N = False
+TIME_FORMAT = "H:i"  # 24-hour format
+DATETIME_FORMAT = "Y-m-d H:i"
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -129,6 +134,8 @@ ALLOWED_HOSTS = [
 ]
 
 GOOGLE_MAPS_API_TOKEN = os.environ.get("GOOGLE_MAPS_API_TOKEN", "")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+MOCK_OPENAI_CALL = os.environ.get("MOCK_OPENAI_CALL", "False") == "True"
 
 LOGGING = {
     "version": 1,
