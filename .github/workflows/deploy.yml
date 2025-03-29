@@ -19,39 +19,10 @@ jobs:
       - name: Add known hosts
         run: ssh-keyscan -H ${{ vars.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to server
+      - name: Copy and execute deploy script
         run: |
-          # Create deployment script
-          cat << 'EOF' > deploy.sh
-          #!/bin/bash
+          # Copy deploy script
+          scp scripts/deploy.sh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.PROJECT_PATH }}/
           
-          # Navigate to project directory
-          cd ${{ vars.PROJECT_PATH }}
-          
-          # Pull latest changes
-          git pull origin main
-          
-          # Install dependencies using uv
-          uv venv
-          uv pip install -e .
-          
-          # Run migrations
-          uv manage.py migrate
-          
-          # Collect static files
-          cd golfbackend && uv manage.py collectstatic --noinput
-          
-          # Restart uwsgi service
-          sudo systemctl restart golf_server
-          
-          EOF
-          
-          # Make script executable
-          chmod +x deploy.sh
-          
-          # Copy files to server
-          scp -r ./* ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.PROJECT_PATH }}/
-          scp deploy.sh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.PROJECT_PATH }}/
-          
-          # Execute deployment script
-          ssh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "cd ${{ vars.PROJECT_PATH }} && ./deploy.sh" 
+          # Make it executable and run
+          ssh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "chmod +x ${{ vars.PROJECT_PATH }}/deploy.sh && ${{ vars.PROJECT_PATH }}/deploy.sh"
