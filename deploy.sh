@@ -6,7 +6,7 @@ uv venv
 uv pip install -e .
 
 # Run migrations
-uv manage.py migrate
+cd golfbackend && uv manage.py migrate
 
 # Collect static files
 cd golfbackend && uv manage.py collectstatic --noinput
