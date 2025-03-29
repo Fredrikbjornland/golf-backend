@@ -6,10 +6,10 @@ uv venv
 uv pip install -e .
 
 # Run migrations
-cd golfbackend && uv manage.py migrate
+cd golfbackend && uv run manage.py migrate
 
 # Collect static files
-cd golfbackend && uv manage.py collectstatic --noinput
+cd golfbackend && uv run manage.py collectstatic --noinput
 
 # Restart uwsgi service
 sudo systemctl restart golf_server
