@@ -132,6 +132,10 @@ ALLOWED_HOSTS = [
     "localhost",
     "http://localhost:5173",
 ]
+STATIC_URL = "/static/"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
 
 GOOGLE_MAPS_API_TOKEN = os.environ.get("GOOGLE_MAPS_API_TOKEN", "")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
