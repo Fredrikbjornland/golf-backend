@@ -1,0 +1,57 @@
+name: Deploy to Digital Ocean
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa 
+
+      - name: Add known hosts
+        run: ssh-keyscan -H ${{ vars.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          # Create deployment script
+          cat << 'EOF' > deploy.sh
+          #!/bin/bash
+          
+          # Navigate to project directory
+          cd ${{ vars.PROJECT_PATH }}
+          
+          # Pull latest changes
+          git pull origin main
+          
+          # Install dependencies using uv
+          uv pip install -e .
+          
+          # Run migrations
+          python manage.py migrate
+          
+          # Collect static files
+          python manage.py collectstatic --noinput
+          
+          # Restart uwsgi service
+          sudo systemctl restart uwsgi
+          
+          # Restart nginx
+          sudo systemctl restart nginx
+          EOF
+          
+          # Make script executable
+          chmod +x deploy.sh
+          
+          # Copy files to server
+          scp -r ./* ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.PROJECT_PATH }}/
+          scp deploy.sh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.PROJECT_PATH }}/
+          
+          # Execute deployment script
+          ssh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "cd ${{ vars.PROJECT_PATH }} && ./deploy.sh" 
