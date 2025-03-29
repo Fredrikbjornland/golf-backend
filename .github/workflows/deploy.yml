@@ -42,7 +42,7 @@ jobs:
           uv manage.py collectstatic --noinput
           
           # Restart uwsgi service
-          sudo systemctl restart uwsgi
+          sudo systemctl restart golf_server
           
           # Restart nginx
           sudo systemctl restart nginx
