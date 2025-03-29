@@ -5,3 +5,4 @@ db.sqlite3
 *.swo
 golfbackend/golfbackend/local_settings.py
 .vscode/
+.venv/
