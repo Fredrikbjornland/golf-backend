@@ -36,10 +36,10 @@ jobs:
           uv pip install -e .
           
           # Run migrations
-          python manage.py migrate
+          uv manage.py migrate
           
           # Collect static files
-          python manage.py collectstatic --noinput
+          uv manage.py collectstatic --noinput
           
           # Restart uwsgi service
           sudo systemctl restart uwsgi
