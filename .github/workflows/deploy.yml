@@ -39,13 +39,11 @@ jobs:
           uv manage.py migrate
           
           # Collect static files
-          uv manage.py collectstatic --noinput
+          cd golfbackend && uv manage.py collectstatic --noinput
           
           # Restart uwsgi service
           sudo systemctl restart golf_server
           
-          # Restart nginx
-          sudo systemctl restart nginx
           EOF
           
           # Make script executable
