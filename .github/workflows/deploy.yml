@@ -32,6 +32,7 @@ jobs:
           git pull origin main
           
           # Install dependencies using uv
+          uv venv
           uv pip install -e .
           
           # Run migrations
