@@ -131,8 +131,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ALLOWED_HOSTS = [
     "api.golf.fredrikbjornland.no"
 ]
-STATIC_URL = "/static/"
+CORS_ALLOWED_ORIGINS = [
+    "https://findteetimes.netlify.app",
+]
 
+
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
