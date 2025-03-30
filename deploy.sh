@@ -14,7 +14,7 @@ uv pip install -e .
 cd golfbackend && uv run manage.py migrate
 
 # Collect static files without user interaction
-cd golfbackend && uv run manage.py collectstatic --noinput
+uv run manage.py collectstatic --noinput
 
 # Restart the uWSGI service (ensure the service name matches your systemd unit, e.g. "golf_server")
 sudo systemctl restart golf_server
