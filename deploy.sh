@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# Discard local changes to deploy.sh before pulling
+git checkout -- deploy.sh
 # Pull the latest changes from the repository
 git pull origin main
 
