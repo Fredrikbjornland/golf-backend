@@ -129,8 +129,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "http://localhost:5173",
+    "api.golf.fredrikbjornland.no"
 ]
 STATIC_URL = "/static/"
 
