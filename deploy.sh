@@ -1,15 +1,20 @@
-# Pull latest changes
+#!/bin/bash
+set -e
+
+# Pull the latest changes from the repository
 git pull origin main
 
-# Install dependencies using uv
+# Initialize or update the virtual environment using uv
 uv venv
+
+# Install project dependencies in editable mode
 uv pip install -e .
 
-# Run migrations
+# Run database migrations (assumes your manage.py is in the golfbackend directory)
 cd golfbackend && uv run manage.py migrate
 
-# Collect static files
+# Collect static files without user interaction
 cd golfbackend && uv run manage.py collectstatic --noinput
 
-# Restart uwsgi service
+# Restart the uWSGI service (ensure the service name matches your systemd unit, e.g. "golf_server")
 sudo systemctl restart golf_server
