@@ -21,6 +21,7 @@ class Command(BaseCommand):
 
 def scrape_golf_clubs():
     golf_clubs = parse_golf_clubs()
+    logger.info(f"Found {len(golf_clubs)} golf clubs.")
     if golf_clubs:
         for name, club_id in golf_clubs.items():
             try:

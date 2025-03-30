@@ -34,7 +34,7 @@ def login_golfbox():
         session.post(golfbox_login_url, headers=headers, data=form_data, verify=True)
         cookies_dict = requests.utils.dict_from_cookiejar(session.cookies)
         GolfBoxCookie.objects.all().delete()
-        expiration = datetime.now() + timedelta(minutes=10)
+        expiration = timezone.now() + timedelta(minutes=10)
         for name, value in cookies_dict.items():
             GolfBoxCookie.objects.create(name=name, value=value, expires=expiration)
         return cookies_dict
