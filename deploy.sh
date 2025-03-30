@@ -5,8 +5,11 @@ set -e
 git pull origin main
 
 # Initialize or update the virtual environment using uv
-uv venv
-
+if [ ! -d ".venv" ]; then
+    uv venv
+else
+    echo "Virtual environment already exists, skipping creation"
+fi
 # Install project dependencies in editable mode
 uv pip install -e .
 
