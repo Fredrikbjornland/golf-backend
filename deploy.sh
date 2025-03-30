@@ -12,4 +12,4 @@ cd golfbackend && uv run manage.py migrate
 cd golfbackend && uv run manage.py collectstatic --noinput
 
 # Restart uwsgi service
-systemctl restart golf_server
+sudo systemctl restart golf_server
