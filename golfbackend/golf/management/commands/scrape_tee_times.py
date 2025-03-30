@@ -2,7 +2,8 @@ from django.core.management.base import (
     BaseCommand,
 )
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from golf.models import GolfClub, TeeTime
 from golf.utils.scraping import get_timeslots_of_course
 
@@ -20,7 +21,7 @@ class Command(BaseCommand):
 
 def create_dates(days=7):
     dates = []
-    current_date = datetime.now() + timedelta(days=1)
+    current_date = timezone.now() + timedelta(days=1)
     for _ in range(days):
         date_string = current_date.strftime("%Y%m%d") + "T000000"
         dates.append(date_string)
@@ -30,7 +31,7 @@ def create_dates(days=7):
 
 def scrape_tee_times():
     relevant_dates = create_dates(4)
-    clubs = GolfClub.objects.filter(id=18, disabled=False).prefetch_related("golf_courses")
+    clubs = GolfClub.objects.filter(disabled=False).prefetch_related("golf_courses")
     for club in clubs:
         for course in club.golf_courses.all():
             timeslots = get_timeslots_of_course(course.course_id, club.club_id, course.name, relevant_dates)

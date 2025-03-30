@@ -32,6 +32,7 @@ clubs_with_no_location = {
     "Høken golfklubb": {"lat": 0, "lng": 0},
     "Voss Golfklubb": {"lat": 60.6818829, "lng": 6.4834398},
     "Norges Golfforbund": {"lat": 0, "lng": 0},
+    "Frosta Golfklubb": {"lat": 63.583193012253375, "lng": 10.803398413858403},
 }
 
 
