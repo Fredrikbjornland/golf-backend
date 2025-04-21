@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("golf", "0004_remove_teetime_tee_time_id"),
     ]

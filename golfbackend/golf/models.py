@@ -23,7 +23,9 @@ class GolfClub(models.Model):
 
 class GolfCourse(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    golf_club = models.ForeignKey(GolfClub, on_delete=models.CASCADE, related_name="golf_courses")
+    golf_club = models.ForeignKey(
+        GolfClub, on_delete=models.CASCADE, related_name="golf_courses"
+    )
     course_id = models.CharField(max_length=100)
     created = models.DateTimeField(default=timezone.now)
 
@@ -39,7 +41,9 @@ class TeeTime(models.Model):
     expired = models.BooleanField()
     last_updated = models.DateTimeField(auto_now=True)
     price_in_ore = models.IntegerField(
-        null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(1000000)]
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(1000000)],
     )
 
     @classmethod
@@ -91,7 +95,9 @@ class TeeTime(models.Model):
         if filter_data.get("max_price") and filter_data["max_price"] is not None:
             try:
                 max_price_ore = int(float(filter_data["max_price"]) * 100)
-                filters &= Q(price_in_ore__lte=max_price_ore) | Q(price_in_ore__isnull=True)
+                filters &= Q(price_in_ore__lte=max_price_ore) | Q(
+                    price_in_ore__isnull=True
+                )
             except (ValueError, TypeError):
                 logger.warning(f"Invalid max price: {filter_data['max_price']}")
 

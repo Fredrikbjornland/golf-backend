@@ -26,7 +26,14 @@ class GolfClubAdmin(admin.ModelAdmin):
 @admin.register(TeeTime)
 class TeeTimeAdmin(admin.ModelAdmin):
     search_fields = ["golf_course__name", "golf_course__golf_club__name"]
-    list_filter = ["time", "availability", "available_spots", "expired", "last_updated", "price_in_ore"]
+    list_filter = [
+        "time",
+        "availability",
+        "available_spots",
+        "expired",
+        "last_updated",
+        "price_in_ore",
+    ]
     list_display = [
         "display_time",
         "golf_course",

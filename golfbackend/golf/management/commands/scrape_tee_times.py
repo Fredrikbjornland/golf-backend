@@ -34,7 +34,9 @@ def scrape_tee_times():
     clubs = GolfClub.objects.filter(disabled=False).prefetch_related("golf_courses")
     for club in clubs:
         for course in club.golf_courses.all():
-            timeslots = get_timeslots_of_course(course.course_id, club.club_id, course.name, relevant_dates)
+            timeslots = get_timeslots_of_course(
+                course.course_id, club.club_id, course.name, relevant_dates
+            )
             for timeslot in timeslots:
                 TeeTime.objects.create(
                     time=timeslot.get("time"),

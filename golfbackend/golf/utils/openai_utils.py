@@ -70,7 +70,10 @@ def parse_tee_time_query(query_text):
         else:
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",  # You can use a different model if needed
-                messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": query_text}],
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": query_text},
+                ],
                 response_format={"type": "json_object"},
             )
             # Parse the real OpenAI response (attribute access)

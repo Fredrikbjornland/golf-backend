@@ -1,4 +1,3 @@
-
 from django.core.management.base import (
     BaseCommand,
 )
@@ -27,9 +26,7 @@ def scrape_clubs_for_courses():
             for name, course_id in courses.items():
                 try:
                     GolfCourse.objects.create(
-                        name=name,
-                        golf_club=club,
-                        course_id=course_id
+                        name=name, golf_club=club, course_id=course_id
                     )
                 except IntegrityError as e:
                     logger.error(f"Failed to add {name}: {e}")

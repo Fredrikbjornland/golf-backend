@@ -55,7 +55,9 @@ def parse_golf_clubs(max_amount=20):
         return None
     select = soup.find("select", {"id": "ddlClub"})
     if not select:
-        logger.error("Failed to find select element with id ddlClub, are cookies correct?")
+        logger.error(
+            "Failed to find select element with id ddlClub, are cookies correct?"
+        )
         return None
     options = select.find_all("option")
 
@@ -73,7 +75,12 @@ def parse_golf_clubs(max_amount=20):
 
 def parse_golf_courses_of_club(club_id: str):
     url = get_club_url()
-    form_data = {"command": "getClub", "commandValue": "", "ddlClub": f"{{{club_id}}}", "ddlResource": ""}
+    form_data = {
+        "command": "getClub",
+        "commandValue": "",
+        "ddlClub": f"{{{club_id}}}",
+        "ddlResource": "",
+    }
 
     cookies = get_cookies()
 
@@ -85,7 +92,9 @@ def parse_golf_courses_of_club(club_id: str):
     if not select:
         select = soup.find("select", {"id": "ddlRessource_GUID"})
     if not select:
-        logger.error("Failed to find select element with id ddlRessoruce, are cookies correct?")
+        logger.error(
+            "Failed to find select element with id ddlRessoruce, are cookies correct?"
+        )
         return None
     options = select.find_all("option")
 
@@ -138,7 +147,9 @@ def get_availability(child):
 
 
 def get_price_in_ore(child):
-    priceContainerDiv = child.find("div", {"class": "d-flex flex-row flex-center pt-2 pointer"})
+    priceContainerDiv = child.find(
+        "div", {"class": "d-flex flex-row flex-center pt-2 pointer"}
+    )
     if priceContainerDiv is None:
         return None
     priceDiv = priceContainerDiv.find("div", {"class": "ymPrice"})
@@ -176,7 +187,9 @@ def get_timeslots_of_course_day(soup):
     if div is None:
         return None
     children = div.children
-    return [process_child(child) for child in children if process_child(child) is not None]
+    return [
+        process_child(child) for child in children if process_child(child) is not None
+    ]
 
 
 def date_str_to_datetime(date_str: str, time_str: str, timezone_str="UTC"):
@@ -190,7 +203,9 @@ def date_str_to_datetime(date_str: str, time_str: str, timezone_str="UTC"):
     return aware_datetime
 
 
-def get_timeslots_of_course(course_id: str, club_id: str, course_name: str, relevant_dates: list[str]):
+def get_timeslots_of_course(
+    course_id: str, club_id: str, course_name: str, relevant_dates: list[str]
+):
     all_timeslots = []
     cookies = get_cookies()
     for date in relevant_dates:

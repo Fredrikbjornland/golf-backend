@@ -55,7 +55,9 @@ def tee_times(request):
     parsed_query = {k: v for k, v in parsed_query.items() if v is not None}
     logger.info(parsed_query)
     filters = TeeTime.apply_filters(parsed_query)
-    tee_times = TeeTime.objects.filter(filters).select_related("golf_course", "golf_course__golf_club")
+    tee_times = TeeTime.objects.filter(filters).select_related(
+        "golf_course", "golf_course__golf_club"
+    )
     serializer = TeeTimeSerializer(tee_times, many=True)
     return Response(serializer.data)
 
@@ -78,7 +80,9 @@ def search_for_tee_time(request):
 
     filters = TeeTime.apply_filters(parsed_query)
 
-    tee_times = TeeTime.objects.filter(filters).select_related("golf_course", "golf_course__golf_club")
+    tee_times = TeeTime.objects.filter(filters).select_related(
+        "golf_course", "golf_course__golf_club"
+    )
 
     serializer = TeeTimeSerializer(tee_times, many=True)
 

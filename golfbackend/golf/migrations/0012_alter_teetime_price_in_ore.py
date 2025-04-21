@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("golf", "0011_remove_golfcourse_price_in_ore_teetime_price_in_ore"),
     ]

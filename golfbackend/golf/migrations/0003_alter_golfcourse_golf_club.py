@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("golf", "0002_alter_golfclub_latitude_alter_golfclub_longitude"),
     ]

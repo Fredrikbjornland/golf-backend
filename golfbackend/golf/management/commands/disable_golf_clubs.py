@@ -13,14 +13,14 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--distance',
+            "--distance",
             type=int,
             default=100,
-            help='Maximum distance in kilometers (default: 100)'
+            help="Maximum distance in kilometers (default: 100)",
         )
 
     def handle(self, *args, **options):
-        distance = options['distance']
+        distance = options["distance"]
         logger.info(f"Started disabling golf clubs further than {distance}km away.")
         disable_golf_clubs_longer_than_x_km_away(distance, OSLO_LAT_LNG)
         logger.info("Finished disabling golf clubs.")
@@ -34,4 +34,6 @@ def disable_golf_clubs_longer_than_x_km_away(x: int, location: tuple):
             if distance > x:
                 club.disabled = True
                 club.save()
-                logger.info(f"Disabled {club.name} because it is {distance:.1f} km away from {location}.")
+                logger.info(
+                    f"Disabled {club.name} because it is {distance:.1f} km away from {location}."
+                )

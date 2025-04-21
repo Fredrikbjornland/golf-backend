@@ -1,0 +1,12 @@
+[flake8]
+max-line-length = 120
+extend-ignore = E203
+
+# Ignoring E722: Allow usage of bare except
+# Ignoring W503: Allow line break before binary operator (conflict with black formatting style)
+ignore = E722, W503
+
+
+exclude = 
+    venv
+    local_settings.py

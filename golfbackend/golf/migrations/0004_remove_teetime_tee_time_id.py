@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("golf", "0003_alter_golfcourse_golf_club"),
     ]

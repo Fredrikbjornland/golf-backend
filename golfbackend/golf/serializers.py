@@ -38,7 +38,9 @@ class GolfClubSerializer(serializers.ModelSerializer):
 
         # Aggregate counts of TeeTimes by available_spots and date
         counts = (
-            tee_times.values("date", "available_spots").annotate(count=Count("id")).order_by("date", "available_spots")
+            tee_times.values("date", "available_spots")
+            .annotate(count=Count("id"))
+            .order_by("date", "available_spots")
         )
         # Organize data by date and capacity
         data_by_date = {}
