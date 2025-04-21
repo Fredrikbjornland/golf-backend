@@ -5,6 +5,7 @@ from .serializers import GolfClubSerializer, GolfCourseSerializer, TeeTimeSerial
 from django.http import JsonResponse, Http404
 from .utils.openai_utils import parse_tee_time_query
 import logging
+from django.core.paginator import Paginator
 
 logger = logging.getLogger("default")
 
@@ -53,10 +54,11 @@ def tee_times(request):
 
     # Remove None values
     parsed_query = {k: v for k, v in parsed_query.items() if v is not None}
-    logger.info(parsed_query)
     filters = TeeTime.apply_filters(parsed_query)
-    tee_times = TeeTime.objects.filter(filters).select_related(
-        "golf_course", "golf_course__golf_club"
+    tee_times = (
+        TeeTime.objects.filter(filters)
+        .select_related("golf_course", "golf_course__golf_club")
+        .order_by("time")
     )
     serializer = TeeTimeSerializer(tee_times, many=True)
     return Response(serializer.data)
@@ -74,16 +76,32 @@ def search_for_tee_time(request):
         return Response({"error": "Query parameter is required"}, status=400)
 
     parsed_query = parse_tee_time_query(query)
-    logger.info(parsed_query)
     if "error" in parsed_query:
         return Response({"error": parsed_query["error"]}, status=500)
 
     filters = TeeTime.apply_filters(parsed_query)
-
-    tee_times = TeeTime.objects.filter(filters).select_related(
-        "golf_course", "golf_course__golf_club"
+    tee_times = (
+        TeeTime.objects.filter(filters)
+        .select_related("golf_course", "golf_course__golf_club")
+        .order_by("time")
     )
 
-    serializer = TeeTimeSerializer(tee_times, many=True)
+    paginator = Paginator(tee_times, 100)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
 
-    return Response({"parsed_query": parsed_query, "results": serializer.data})
+    serializer = TeeTimeSerializer(page_obj, many=True)
+
+    return Response(
+        {
+            "parsed_query": parsed_query,
+            "results": serializer.data,
+            "pagination": {
+                "total_results": paginator.count,
+                "total_pages": paginator.num_pages,
+                "current_page": page_obj.number,
+                "has_next": page_obj.has_next(),
+                "has_previous": page_obj.has_previous(),
+            },
+        }
+    )

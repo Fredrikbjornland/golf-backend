@@ -52,7 +52,7 @@ def parse_tee_time_query(query_text):
         If information is not provided, use null for that field.
         """
 
-        print(settings.MOCK_OPENAI_CALL)
+        logger.info("Mocking OpenAI call: %s", settings.MOCK_OPENAI_CALL)
         if settings.MOCK_OPENAI_CALL:
             response = {
                 "choices": [
