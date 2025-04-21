@@ -129,7 +129,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ALLOWED_HOSTS = [
     "api.golf.fredrikbjornland.no",
-    "https://findteetimes.netlify.app"
+    "https://findteetimes.netlify.app",
+    "68.183.3.164"
 ]
 CORS_ALLOWED_ORIGINS = [
     "https://findteetimes.netlify.app",
