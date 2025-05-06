@@ -209,13 +209,11 @@ def get_timeslots_of_course(
     all_timeslots = []
     cookies = get_cookies()
     for date in relevant_dates:
-        print(date)
         url = get_course_url(course_id, club_id, date)
         response = requests.post(url, cookies=cookies)
         soup = BeautifulSoup(response.text, "html.parser")
 
         timeslots = get_timeslots_of_course_day(soup)
-        print(timeslots)
         if timeslots is None:
             logger.error(f"Failed to get timeslots for {course_name} on {date}")
             continue

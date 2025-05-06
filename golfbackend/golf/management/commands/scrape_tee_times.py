@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.utils import timezone
 from golf.models import GolfClub, TeeTime
 from golf.utils.scraping import get_timeslots_of_course
+import time
 
 logger = logging.getLogger("default")
 
@@ -46,3 +47,4 @@ def scrape_tee_times():
                     expired=timeslot.get("expired"),
                     price_in_ore=timeslot.get("price_in_ore"),
                 )
+        time.sleep(1)
