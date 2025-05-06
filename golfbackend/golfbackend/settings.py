@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     "golf",
     "rest_framework",
     "corsheaders",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -203,3 +205,8 @@ try:
     from golfbackend.local_settings import *  # type: ignore # noqa
 except ImportError:
     pass
+
+# Django Debug Toolbar settings
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

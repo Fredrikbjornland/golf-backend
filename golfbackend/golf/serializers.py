@@ -11,7 +11,7 @@ class GolfCourseSerializer(serializers.ModelSerializer):
         fields = ["course_id", "name", "golf_club", "created"]
 
 
-class GolfClubSerializer(serializers.ModelSerializer):
+class GolfClubSerializer(serializers.ModelSerializer[GolfClub]):
     golf_courses = GolfCourseSerializer(many=True, read_only=True)
     tee_times_capacity_count = serializers.SerializerMethodField()
 
@@ -55,22 +55,32 @@ class GolfClubSerializer(serializers.ModelSerializer):
         return data_by_date
 
 
-class TeeTimeSerializer(serializers.ModelSerializer):
-    golf_course = GolfCourseSerializer(read_only=True)
-    golf_club = serializers.SerializerMethodField()
+# Update GolfCourseSerializer to include nested golf_club data
+class NestedGolfClubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GolfClub
+        fields = ["club_id", "name", "latitude", "longitude"]
+
+
+class GolfCourseWithClubSerializer(serializers.ModelSerializer):
+    golf_club = NestedGolfClubSerializer(read_only=True)
+
+    class Meta:
+        model = GolfCourse
+        fields = ["course_id", "name", "golf_club", "created"]
+
+
+class TeeTimeSerializer(serializers.ModelSerializer[TeeTime]):
+    golf_course = GolfCourseWithClubSerializer(read_only=True)
 
     class Meta:
         model = TeeTime
         fields = [
             "time",
             "golf_course",
-            "golf_club",
             "availability",
             "available_spots",
             "expired",
             "last_updated",
             "price_in_ore",
         ]
-
-    def get_golf_club(self, obj):
-        return GolfClubSerializer(obj.golf_course.golf_club).data

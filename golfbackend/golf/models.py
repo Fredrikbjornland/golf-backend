@@ -35,7 +35,9 @@ class GolfCourse(models.Model):
 
 class TeeTime(models.Model):
     time = models.DateTimeField()
-    golf_course = models.ForeignKey(GolfCourse, on_delete=models.CASCADE)
+    golf_course = models.ForeignKey(
+        GolfCourse, on_delete=models.CASCADE, related_name="tee_times"
+    )
     availability = models.CharField(max_length=100)
     available_spots = models.IntegerField()
     expired = models.BooleanField()

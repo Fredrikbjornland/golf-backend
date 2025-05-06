@@ -14,7 +14,7 @@ logger = logging.getLogger("default")
 
 @api_view(["GET"])
 def get_golf_clubs(request):
-    golf_clubs = GolfClub.objects.all()
+    golf_clubs = GolfClub.objects.all().prefetch_related("golf_courses")
     serializer = GolfClubSerializer(golf_clubs, many=True)
     return Response(serializer.data)
 
@@ -42,7 +42,9 @@ def get_times(request, course_id, date):
     times = TeeTime.objects.filter(golf_course__course_id=course_id, time__date=date)
     # Filter out past tee times
     today = date.today()
-    times = times.filter(time__date__gte=today)
+    times = times.filter(time__date__gte=today).select_related(
+        "golf_course", "golf_course__golf_club"
+    )
     serializer = TeeTimeSerializer(times, many=True)
     return Response(serializer.data)
 
