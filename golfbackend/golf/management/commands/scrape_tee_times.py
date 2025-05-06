@@ -47,4 +47,5 @@ def scrape_tee_times():
                     expired=timeslot.get("expired"),
                     price_in_ore=timeslot.get("price_in_ore"),
                 )
+        logger.info(f"Scraped {len(timeslots)} tee times for {club.name}")
         time.sleep(1)
