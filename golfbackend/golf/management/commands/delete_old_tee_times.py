@@ -1,17 +1,17 @@
 from django.core.management.base import BaseCommand
 from golf.models import TeeTime
-from datetime import date
+from django.utils import timezone
 import logging
 
 logger = logging.getLogger("default")
 
 
 class Command(BaseCommand):
-    help = "Delete all tee times older than today"
+    help = "Delete all tee times older than current time"
 
     def handle(self, *args, **options):
-        today = date.today()
-        old_tee_times = TeeTime.objects.filter(time__date__lt=today)
+        now = timezone.now()
+        old_tee_times = TeeTime.objects.filter(time__lt=now)
         count = old_tee_times.count()
 
         if count > 0:

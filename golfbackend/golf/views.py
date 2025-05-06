@@ -7,7 +7,7 @@ from .utils.openai_utils import parse_tee_time_query
 from .utils.query_utils import sort_queryset_by_distance, get_or_geocode_location
 import logging
 from django.core.paginator import Paginator
-from datetime import date
+from django.utils import timezone
 
 logger = logging.getLogger("default")
 
@@ -38,11 +38,13 @@ def get_golf_courses(request, club_id):
 
 
 @api_view(["GET"])
-def get_times(request, course_id, date):
-    times = TeeTime.objects.filter(golf_course__course_id=course_id, time__date=date)
-    # Filter out past tee times
-    today = date.today()
-    times = times.filter(time__date__gte=today).select_related(
+def get_times(request, course_id, date_str):
+    times = TeeTime.objects.filter(
+        golf_course__course_id=course_id, time__date=date_str
+    )
+    # Filter out past tee times using current time, not just date
+    now = timezone.now()
+    times = times.filter(time__gte=now).select_related(
         "golf_course", "golf_course__golf_club"
     )
     serializer = TeeTimeSerializer(times, many=True)
@@ -63,11 +65,11 @@ def tee_times(request):
     parsed_query = {k: v for k, v in parsed_query.items() if v is not None}
     filters = TeeTime.apply_filters(parsed_query)
 
-    # Ensure we only get tee times from today or future
-    today = date.today()
+    # Ensure we only get tee times from current time or future, not just current date
+    now = timezone.now()
     tee_times = (
         TeeTime.objects.filter(filters)
-        .filter(time__date__gte=today)
+        .filter(time__gte=now)
         .select_related("golf_course", "golf_course__golf_club")
         .order_by("time")
     )
@@ -125,11 +127,11 @@ def search_for_tee_time(request):
 
     filters = TeeTime.apply_filters(parsed_query)
 
-    # Ensure we only get tee times from today or future
-    today = date.today()
+    # Ensure we only get tee times from current time or future, not just current date
+    now = timezone.now()
     base_queryset = (
         TeeTime.objects.filter(filters)
-        .filter(time__date__gte=today)
+        .filter(time__gte=now)
         .select_related("golf_course", "golf_course__golf_club")
     )
 
