@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from golf.models import GolfBoxCookie, GolfClub, GolfCourse, TeeTime
+from golf.models import GolfBoxCookie, GolfClub, GolfCourse, SearchQuery, TeeTime
 
 
 class GolfCourseInline(admin.TabularInline):
@@ -63,3 +63,4 @@ class GolfCourseAdmin(admin.ModelAdmin):
 
 
 admin.site.register(GolfBoxCookie)
+admin.site.register(SearchQuery)

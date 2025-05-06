@@ -79,6 +79,15 @@ class TeeTime(models.Model):
                 filters &= Q(time__hour__gte=12, time__hour__lt=17)
             elif "evening" in time_range:
                 filters &= Q(time__hour__gte=17, time__hour__lt=21)
+            elif "to" in time_range:
+                start_time, end_time = time_range.split("to")
+                start_time = start_time.strip()
+                end_time = end_time.strip()
+                start_time_obj = datetime.strptime(start_time, "%H:%M").time()
+                end_time_obj = datetime.strptime(end_time, "%H:%M").time()
+                filters &= Q(
+                    time__time__gte=start_time_obj, time__time__lt=end_time_obj
+                )
 
         if filter_data.get("players_count"):
             try:
@@ -87,9 +96,9 @@ class TeeTime(models.Model):
             except (ValueError, TypeError):
                 logger.warning(f"Invalid players count: {filter_data['players_count']}")
 
-        if filter_data.get("location"):
-            location = filter_data["location"].lower()
-            location_filters = Q(golf_course__golf_club__name__icontains=location)
+        if filter_data.get("golf_club"):
+            golf_club = filter_data["golf_club"].lower()
+            location_filters = Q(golf_course__golf_club__name__icontains=golf_club)
             filters &= location_filters
 
         if filter_data.get("max_price") and filter_data["max_price"] is not None:
@@ -112,6 +121,23 @@ class GolfBoxCookie(models.Model):
     name = models.CharField(max_length=255)
     value = models.TextField()
     expires = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class SearchQuery(models.Model):
+    query = models.TextField()
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.query
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     def __str__(self):
         return self.name
