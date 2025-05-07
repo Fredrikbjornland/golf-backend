@@ -54,7 +54,6 @@ def get_times(request, course_id, date_str):
 @api_view(["GET"])
 def tee_times(request):
     query_dict = request.GET
-
     parsed_query = {
         "date": query_dict.get("date"),
         "players_count": query_dict.get("slotsAvailable"),

@@ -191,7 +191,7 @@ LOGGING = {
         "django": {
             "handlers": ["default"],
             "propagate": True,
-            "level": "WARNING",
+            "level": "INFO",
         },
         "default": {
             "handlers": ["default"],
