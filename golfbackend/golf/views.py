@@ -67,14 +67,30 @@ def tee_times(request):
 
     # Ensure we only get tee times from current time or future, not just current date
     now = timezone.now()
-    tee_times = (
+    tee_times_qs = (
         TeeTime.objects.filter(filters)
         .filter(time__gte=now)
         .select_related("golf_course", "golf_course__golf_club")
         .order_by("time")
     )
-    serializer = TeeTimeSerializer(tee_times, many=True)
-    return Response(serializer.data)
+
+    paginator = Paginator(tee_times_qs, 500)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+
+    serializer = TeeTimeSerializer(page_obj, many=True)
+    return Response(
+        {
+            "results": serializer.data,
+            "pagination": {
+                "total_results": paginator.count,
+                "total_pages": paginator.num_pages,
+                "current_page": page_obj.number,
+                "has_next": page_obj.has_next(),
+                "has_previous": page_obj.has_previous(),
+            },
+        }
+    )
 
 
 @api_view(["GET"])
