@@ -103,6 +103,10 @@ class TeeTime(models.Model):
             location_filters = Q(golf_course__golf_club__name__icontains=golf_club)
             filters &= location_filters
 
+        if filter_data.get("golf_club_id"):
+            golf_club_id = filter_data["golf_club_id"]
+            filters &= Q(golf_course__golf_club__club_id=golf_club_id)
+
         if filter_data.get("max_price") and filter_data["max_price"] is not None:
             try:
                 max_price_ore = int(float(filter_data["max_price"]) * 100)

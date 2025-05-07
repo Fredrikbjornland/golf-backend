@@ -59,9 +59,10 @@ def tee_times(request):
         "date": query_dict.get("date"),
         "players_count": query_dict.get("slotsAvailable"),
         "max_price": query_dict.get("maxPrice"),
+        "time_range": query_dict.get("timeRange"),
+        "golf_club_id": query_dict.get("golfClubId"),
     }
 
-    # Remove None values
     parsed_query = {k: v for k, v in parsed_query.items() if v is not None}
     filters = TeeTime.apply_filters(parsed_query)
 
