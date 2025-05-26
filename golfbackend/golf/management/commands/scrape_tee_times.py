@@ -14,9 +14,18 @@ logger = logging.getLogger("default")
 class Command(BaseCommand):
     help = "Scrape golf box for golf courses and tee times."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--number_of_clubs",
+            type=int,
+            default=None,
+            help="Number of clubs to scrape (default: all)",
+        )
+
     def handle(self, *args, **options):
         logger.info("Started tee time scraping.")
-        scrape_tee_times()
+        number_of_clubs = options.get("number_of_clubs")
+        scrape_tee_times(number_of_clubs=number_of_clubs)
         logger.info("Tee time scraping finished.")
 
 
@@ -30,22 +39,26 @@ def create_dates(days=7):
     return dates
 
 
-def scrape_tee_times():
-    relevant_dates = create_dates(4)
-    clubs = GolfClub.objects.filter(disabled=False).prefetch_related("golf_courses")
-    for club in clubs:
+def scrape_tee_times(number_of_clubs=None):
+    relevant_dates = create_dates(6)
+    clubs_qs = GolfClub.objects.filter(disabled=False).prefetch_related("golf_courses")
+    if number_of_clubs is not None:
+        clubs_qs = clubs_qs[:number_of_clubs]
+    for club in clubs_qs:
         for course in club.golf_courses.all():
             timeslots = get_timeslots_of_course(
                 course.course_id, club.club_id, course.name, relevant_dates
             )
             for timeslot in timeslots:
-                TeeTime.objects.create(
+                TeeTime.objects.update_or_create(
                     time=timeslot.get("time"),
                     golf_course=course,
-                    availability=timeslot.get("availability"),
-                    available_spots=timeslot.get("available_spots"),
-                    expired=timeslot.get("expired"),
-                    price_in_ore=timeslot.get("price_in_ore"),
+                    defaults={
+                        "availability": timeslot.get("availability"),
+                        "available_spots": timeslot.get("available_spots"),
+                        "expired": timeslot.get("expired"),
+                        "price_in_ore": timeslot.get("price_in_ore"),
+                    },
                 )
         logger.info(f"Scraped {len(timeslots)} tee times for {club.name}")
         time.sleep(1)

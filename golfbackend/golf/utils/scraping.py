@@ -187,12 +187,15 @@ def get_timeslots_of_course_day(soup):
     if div is None:
         return None
     children = div.children
-    return [
-        process_child(child) for child in children if process_child(child) is not None
-    ]
+    result = []
+    for child in children:
+        processed = process_child(child)
+        if processed is not None:
+            result.append(processed)
+    return result
 
 
-def date_str_to_datetime(date_str: str, time_str: str, timezone_str="UTC"):
+def date_str_to_datetime(date_str: str, time_str: str, timezone_str="Europe/Oslo"):
     if not date_str or not time_str:
         return None
     date_obj = datetime.strptime(date_str, "%Y%m%dT%H%M%S")
