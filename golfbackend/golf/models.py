@@ -97,6 +97,8 @@ class TeeTime(models.Model):
                 filters &= Q(available_spots__gte=players_count)
             except (ValueError, TypeError):
                 logger.warning(f"Invalid players count: {filter_data['players_count']}")
+        else:
+            filters &= Q(available_spots__gt=0)
 
         if filter_data.get("golf_club"):
             golf_club = filter_data["golf_club"].lower()
